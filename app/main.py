@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime, timezone
 from typing import Annotated
+from dotenv import load_dotenv
 
 import jwt
 from passlib.context import CryptContext
@@ -7,6 +8,9 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
+
+load_dotenv()
 
 SECRET_KEY = "97478c86f475f5ed6024098b2488ce03f832d5f5b62b60864dd5847fabd92ba2"
 ALGORITHM = "HS256"
