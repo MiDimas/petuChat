@@ -6,7 +6,7 @@ from app.models import User
 
 
 class Email(Base):
-    id: Mapped[int] = mapped_column(primary_key=True)
+
     address: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
