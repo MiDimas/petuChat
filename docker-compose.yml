@@ -1,0 +1,7 @@
+services:
+  database:
+    build: ./database
+    env_file: .env
+    restart: always
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
