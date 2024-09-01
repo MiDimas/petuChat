@@ -5,3 +5,6 @@ services:
     restart: always
     volumes:
       - ./database/data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    container_name: postges_db
