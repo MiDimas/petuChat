@@ -2,8 +2,8 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models import Email
 from app.types import str_uniq
+from .. import Email
 
 
 class User(Base):

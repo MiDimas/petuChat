@@ -2,8 +2,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
-from app.models import User
 from app.types import str_uniq
+from .. import User
 
 
 class Email(Base):

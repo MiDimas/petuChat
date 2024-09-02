@@ -1,6 +1,5 @@
 
 from app.database import DB_URL, Base
-from app.models import User, Email
 
 import asyncio
 from logging.config import fileConfig
