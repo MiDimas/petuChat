@@ -5,6 +5,7 @@ asyncpg==0.29.0
 bcrypt==4.2.0
 click==8.1.7
 fastapi==0.112.0
+greenlet==3.0.3
 h11==0.14.0
 httptools==0.6.1
 idna==3.7

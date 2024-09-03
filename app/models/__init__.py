@@ -1,2 +1,2 @@
-from .users.models import User
-from .emails.models import Email
+from .users.user_model import User
+from .emails.email_model import Email
