@@ -12,7 +12,7 @@ from alembic import context
 
 import sys
 from os.path import dirname, abspath
-import app.models as models
+import app.repositories as repositories
 
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 # this is the Alembic Config object, which provides
