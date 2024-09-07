@@ -8,6 +8,7 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from app.routes.users.users_route import router as router_users
 
 
 load_dotenv()
@@ -169,3 +170,5 @@ async def get_hash(body: Password):
             detail="Empty request body",
         )
     return get_password_hash(body.password)
+
+app.include_router(router_users)
