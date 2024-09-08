@@ -8,8 +8,7 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.routes.users.users_route import router as router_users
-
+from app.routes import router_users
 
 load_dotenv()
 
@@ -54,6 +53,7 @@ class TokenData(BaseModel):
 class UserInDB(User):
     hashed_password: str
 
+
 class Password(BaseModel):
     password: str
 
@@ -65,6 +65,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_password_hash(password: str):
     return pwd_context.hash(password)
+
+
 # class User(BaseModel):
 #     id: int
 #     name: str
@@ -74,8 +76,6 @@ def get_password_hash(password: str):
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
-
-
 
 
 def get_user(db, username: str):
@@ -104,13 +104,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-
-
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid authentication credentials",
+        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -156,11 +154,13 @@ async def login_for_access_token(
 async def read_users_me(current_user: Annotated[User, Depends(get_current_active_user)]):
     return current_user
 
+
 @app.get("/user/me/items/")
 async def read_own_items(
         current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     return [{"items_id": "Foo", "owner": current_user.username}]
+
 
 @app.post("/hash")
 async def get_hash(body: Password):
@@ -170,5 +170,6 @@ async def get_hash(body: Password):
             detail="Empty request body",
         )
     return get_password_hash(body.password)
+
 
 app.include_router(router_users)
