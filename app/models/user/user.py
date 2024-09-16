@@ -15,5 +15,9 @@ class User:
             'name': params.name
             })
 
+    @classmethod
+    async def get_user_by_id(cls, user_id: int):
+        return await UserRepo.find_one_or_none_by_id(user_id)
+
 
 
