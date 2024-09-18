@@ -4,13 +4,10 @@ services:
       context: './database'
       args:
         POSTGRES_VERSION: ${POSTGRES_VERSION}
-        DB_NAME: ${DB_NAME}
-        DB_USER: ${DB_USER}
-        DB_PASSWORD: ${DB_PASSWORD}
     env_file: .env
     restart: always
     volumes:
       - ./database/data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT}:5432"
+      - "${POSTGRES_PORT}:5432"
     container_name: postgres_db
