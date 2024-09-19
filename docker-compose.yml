@@ -1,13 +1,18 @@
 services:
   database:
-    build:
-      context: './database'
-      args:
-        POSTGRES_VERSION: ${POSTGRES_VERSION}
-    env_file: .env
+    image: postgres:${POSTGRES_VERSION}
+    environment:
+      POSTGRES_USER: midi
+      POSTGRES_PASSWORD: mypassword
+
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "midi", "-U", "midi" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     restart: always
     volumes:
       - ./database/data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5342:5432"
     container_name: postgres_db
