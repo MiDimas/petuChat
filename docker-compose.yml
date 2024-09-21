@@ -2,14 +2,8 @@ services:
   database:
     image: postgres:${POSTGRES_VERSION}
     environment:
-      POSTGRES_USER: midi
       POSTGRES_PASSWORD: mypassword
-
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "midi", "-U", "midi" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      POSTGRES_USER: midi
     restart: always
     volumes:
       - ./database/data:/var/lib/postgresql/data
