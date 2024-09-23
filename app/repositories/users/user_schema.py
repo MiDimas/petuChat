@@ -18,4 +18,7 @@ class UserSchema(UserResponseSchema):
     password: str = Field(..., description="Хэшированный пароль пользователя")
 
 
+class UserCreateResponseSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int | None
 

@@ -1,4 +1,5 @@
 from sqlalchemy.future import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.database import async_session_maker
 
@@ -19,4 +20,18 @@ class BaseRepo:
             query = select(cls.model).filter_by(id=data_id)
             result = await session.execute(query)
             return result.scalar_one_or_none()
+
+
+    @classmethod
+    async def add(cls, **values):
+        async with async_session_maker() as session:
+            async with session.begin():
+                new_instance = cls.model(**values)
+                session.add(new_instance)
+                try:
+                    await session.commit()
+                except SQLAlchemyError as e:
+                    await session.rollback()
+                    raise e
+                return new_instance
 
