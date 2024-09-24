@@ -23,5 +23,5 @@ class User:
 
     @classmethod
     async def create_user(cls, params: UserCreateData):
-        return await UserRepo.insert_user()
+        return await UserRepo.insert_user(**{'name': params.name, 'password': params.password})
 
