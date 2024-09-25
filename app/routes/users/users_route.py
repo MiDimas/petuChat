@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.repositories.users import UserResponseSchema
+from app.repositories.users import UserResponseSchema, UserCreateResponseSchema
 from app.models.user import User, UsersGetAll, UserCreateData
 
 router = APIRouter(prefix='/users', tags=['Пользователи'])
@@ -16,5 +16,5 @@ async def get_user_by_id(user_id: int) -> UserResponseSchema:
 
 
 @router.post("/registration", summary="Создание пользователя", response_model=UserResponseSchema)
-async def create_new_user(user_data: UserCreateData) -> UserCreateResponseSchema:
-    return
+async def create_new_user(user_data: UserCreateData):
+    return await User.create_user(user_data)

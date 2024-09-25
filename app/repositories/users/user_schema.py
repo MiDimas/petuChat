@@ -8,8 +8,8 @@ class UserResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     name: str = Field(..., description="Имя пользователя")
-    token: str = Field(None, description="Токен пользователя")
-    emails: list["EmailSchema"] = Field(None, description="Почты пользователя")
+    token: str = Field(..., description="Токен пользователя")
+    emails: list["EmailSchema"] = Field(..., description="Почты пользователя")
     created_at: datetime = Field(..., description="Дата регистрации")
     updated_at: datetime = Field(..., description="Дата последнего обновления")
 

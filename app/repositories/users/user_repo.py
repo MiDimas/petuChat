@@ -7,4 +7,4 @@ class UserRepo(BaseRepo):
 
     @classmethod
     async def insert_user(cls, **values):
-        return cls.add(**values)
+        return await cls.add(**values)
