@@ -5,7 +5,7 @@ from app.models.user import User, UsersGetAll, UserCreateData
 router = APIRouter(prefix='/users', tags=['Пользователи'])
 
 
-@router.get("/", summary="Получение всех пользователей", response_model=list[UserResponseSchema])
+@router.get("/", summary="Получение всех пользователей")
 async def get_all_users(query: UsersGetAll = Depends()):
     return await User.get_all_users(query)
 

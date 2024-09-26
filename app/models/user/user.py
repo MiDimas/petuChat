@@ -11,15 +11,11 @@ from .user_post import UserCreateData
 class User:
     @classmethod
     async def get_all_users(cls, params: UsersGetAll):
-        return await UserRepo.find_all(**{
-            'id': params.user_id,
-            'name': params.name
-            })
+        return await UserRepo.find_all(**params.to_dict())
 
     @classmethod
     async def get_user_by_id(cls, user_id: int):
         return await UserRepo.find_one_or_none_by_id(user_id)
-
 
     @classmethod
     async def create_user(cls, params: UserCreateData):
