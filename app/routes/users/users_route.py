@@ -6,7 +6,7 @@ router = APIRouter(prefix='/users', tags=['Пользователи'])
 
 
 @router.get("/", summary="Получение всех пользователей")
-async def get_all_users(query: UsersGetAll = Depends()):
+async def get_all_users(query: UsersGetAll = Depends()) -> list[UserResponseSchema]:
     return await User.get_all_users(query)
 
 
