@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 from ..emails import EmailSchema
@@ -10,9 +9,12 @@ class UserResponseSchema(BaseModel):
     id: int
     name: str = Field(..., description="Имя пользователя")
     token: str | None = Field(None, description="Токен пользователя")
-    # emails: Optional[List["EmailSchema"]] = Field(None, description="Почты пользователя")
     created_at: datetime = Field(..., description="Дата регистрации")
     updated_at: datetime = Field(..., description="Дата последнего обновления")
+
+
+class UserFullResponseSchema(UserResponseSchema):
+    emails: list["EmailSchema"] = Field([], description="Почты пользователя")
 
 
 class UserSchema(UserResponseSchema):

@@ -18,6 +18,10 @@ class User:
         return await UserRepo.find_one_or_none_by_id(user_id)
 
     @classmethod
+    async def get_full_user_by_id(cls, user_id: int):
+        return await UserRepo.find_full_data(user_id)
+
+    @classmethod
     async def create_user(cls, params: UserCreateData):
         return await UserRepo.insert_user(**{'name': params.name, 'password': params.password})
 
