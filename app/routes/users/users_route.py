@@ -10,12 +10,11 @@ async def get_all_users(query: UsersGetAll = Depends()) -> list[UserResponseSche
     return await User.get_all_users(query)
 
 
-@router.get("/{id}", summary="")
+@router.get("/{id}", summary="Получение пользователя по id")
 async def get_user_by_id(user_id: int, full: int | None = 0) -> UserResponseSchema | UserFullResponseSchema:
     if full:
         return await User.get_full_user_by_id(user_id)
     return await User.get_user_by_id(user_id)
-
 
 
 @router.post("/registration", summary="Создание пользователя", response_model=UserResponseSchema)
