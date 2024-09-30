@@ -17,6 +17,6 @@ async def get_user_by_id(user_id: int, full: int | None = 0) -> UserResponseSche
     return await User.get_user_by_id(user_id)
 
 
-@router.post("/registration", summary="Создание пользователя", response_model=UserResponseSchema)
-async def create_new_user(user_data: UserCreateData):
+@router.post("/registration", summary="Создание пользователя")
+async def create_new_user(user_data: UserCreateData) -> UserResponseSchema:
     return await User.create_user(user_data)
