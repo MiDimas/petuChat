@@ -21,7 +21,6 @@ class BaseRepo:
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
-
     @classmethod
     async def add(cls, **values):
         async with async_session_maker() as session:
@@ -34,4 +33,3 @@ class BaseRepo:
                     await session.rollback()
                     raise e
                 return new_instance
-

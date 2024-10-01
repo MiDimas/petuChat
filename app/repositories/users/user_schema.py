@@ -14,6 +14,7 @@ class UserResponseSchema(BaseModel):
 
 
 class UserFullResponseSchema(UserResponseSchema):
+    password: str = Field(..., description="Хэш пароля")
     emails: list["EmailSchema"] = Field([], description="Почты пользователя")
 
 
