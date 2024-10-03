@@ -13,8 +13,10 @@ class UserCreateData(BaseModel):
         values = values.strip()
         if len(values) < 3 or len(values) > 30:
             raise ValueError('Логин не может содержать меньше 3 и больше 30 символов')
-        if not re.match(r'^[A-Za-z0-9._-]$', values):
+        if not re.match(r'^[A-Za-z0-9._-]*$', values):
             raise ValueError('Логин может содержать только латинские буквы, цифры и символы ".-_"')
+        if not re.match(r'(?=.*[a-zA-Z])', values):
+            raise ValueError('Логин не может состоять только из цифр или спец-символов')
         reserved_names = ['root', 'admin', 'support']
         if values.lower() in reserved_names:
             raise ValueError('Логин не может использовать зарезервированное имя')
@@ -22,8 +24,9 @@ class UserCreateData(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def validate(cls, values: str) -> str:
+    def validate_password(cls, values: str) -> str:
         if not re.match(r'(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}', values):
-            raise ValueError('''Пароль должен содержать как минимум одну заглавную, 
-            одну прописную буквы латинского алфавита, а так же одну цифру и содержать не менее 8 символов''')
+            raise ValueError('Пароль должен содержать как минимум одну заглавную,' +
+                             ' одну прописную буквы латинского алфавита, а так же одну цифру' +
+                             ' и содержать не менее 8 символов')
         return values
