@@ -6,6 +6,7 @@
 from app.repositories.users import UserRepo
 from .user_get import UsersGetAll
 from .user_post import UserCreateData
+from passlib.context import CryptContext
 
 
 class User:
@@ -23,5 +24,12 @@ class User:
 
     @classmethod
     async def create_user(cls, params: UserCreateData):
-        return await UserRepo.insert_user(**{'name': params.name, 'password': params.password})
-
+        if params.password == params.name:
+            raise ValueError('Пароль и логин не должны совпадать')
+        pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+        try:
+            login = params.name.lower().strip()
+            password = pwd_context.hash(params.password)
+            return await UserRepo.insert_user(**{'name': login, 'password': password})
+        except Exception as e:
+            raise e

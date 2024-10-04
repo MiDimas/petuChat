@@ -1,6 +1,7 @@
 from ..repo.base import BaseRepo
 from .user_model import User
 from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import IntegrityError
 from app.database import async_session_maker
 from sqlalchemy.future import select
 
@@ -10,7 +11,11 @@ class UserRepo(BaseRepo):
 
     @classmethod
     async def insert_user(cls, **values):
-        return await cls.add(**values)
+        try:
+            return await cls.add(**values)
+        except IntegrityError as e:
+            raise ValueError('Пользователь с таким логином уже существует')
+
 
     @classmethod
     async def find_full_data(cls, user_id: int):
