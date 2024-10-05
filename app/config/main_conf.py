@@ -6,7 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     POSTGRES_VERSION: Optional[int]
-    SECRET_KEY: Optional[str]
+    SECRET_KEY: str
+    SECRET_REFRESH_KEY: str
     DB_HOST: str
     DB_PORT: int
     DB_NAME: str
