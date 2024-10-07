@@ -7,10 +7,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .. import Email
+    from .. import Token
 
 
 class User(Base):
     name: Mapped[str_uniq] = mapped_column(String(300), unique=True)
     password: Mapped[str] = mapped_column(String(300))
-    token: Mapped[str_null_true] = mapped_column(String(400))
+    tokens: Mapped[list["Token"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     emails: Mapped[list["Email"]] = relationship(back_populates="user", cascade="all, delete-orphan")

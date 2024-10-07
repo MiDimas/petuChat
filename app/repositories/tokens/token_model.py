@@ -4,6 +4,8 @@ from app.database import Base
 from app.types import str_null_true
 from datetime import datetime
 from typing import TYPE_CHECKING
+
+
 class Token(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     refresh_token: Mapped[str] = mapped_column(String(512))
