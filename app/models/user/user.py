@@ -7,6 +7,7 @@ from app.repositories.users import UserRepo
 from .user_get import UsersGetAll
 from .user_post import UserCreateData
 from passlib.context import CryptContext
+from ..token import Token
 
 
 class User:
@@ -30,6 +31,10 @@ class User:
         try:
             login = params.name.lower().strip()
             password = pwd_context.hash(params.password)
-            return await UserRepo.insert_user(**{'name': login, 'password': password})
+            new_user = await UserRepo.insert_user(**{'name': login, 'password': password})
+            if new_user:
+                id_user = new_user.id
+                tokens = Token.generate_tokens({"sub": login, "id": id_user})
+
         except Exception as e:
             raise e

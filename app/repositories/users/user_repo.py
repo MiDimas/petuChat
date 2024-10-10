@@ -16,7 +16,6 @@ class UserRepo(BaseRepo):
         except IntegrityError as e:
             raise ValueError('Пользователь с таким логином уже существует')
 
-
     @classmethod
     async def find_full_data(cls, user_id: int):
         async with async_session_maker() as session:
@@ -29,4 +28,3 @@ class UserRepo(BaseRepo):
                 return None
 
             return user
-
