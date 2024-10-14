@@ -8,6 +8,7 @@ from .user_get import UsersGetAll
 from .user_post import UserCreateData
 from passlib.context import CryptContext
 from ..token import Token
+from fastapi import HTTPException
 
 
 class User:
@@ -35,6 +36,21 @@ class User:
             if new_user:
                 id_user = new_user.id
                 tokens = Token.generate_tokens({"sub": login, "id": id_user})
-
+                result = await Token.save_token_for_user(tokens["refresh"], id_user)
+                return {
+                    "tokens": tokens,
+                }
+            raise HTTPException(
+                status_code=409,
+                detail='Данный пользователь уже существует'
+            )
         except Exception as e:
             raise e
+
+    @classmethod
+    async def verify_user_refresh_token(cls, token: str):
+
+        info = Token.decode_refresh_token(token)
+        current_token = await Token.find_token(token, info['id'])
+        return current_token
+

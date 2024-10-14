@@ -14,3 +14,4 @@ class TokenSchema(BaseModel):
     revoked: bool
     created_at: datetime
     updated_at: datetime
+
