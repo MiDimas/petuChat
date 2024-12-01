@@ -13,7 +13,8 @@ async def get_all_users(query: UsersGetAll = Depends()) -> list[UserResponseSche
 @router.post("/registration", summary="Создание пользователя")
 async def create_new_user(user_data: UserCreateData):
     try:
-        return await User.create_user(user_data)
+        user_with_tokens = await User.create_user(user_data)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=e.args)
 

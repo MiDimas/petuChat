@@ -2,12 +2,13 @@
 Файлы моделей, содержат основную бизнес-логику для различных сущностей, в данных файлах объединяется
 получение данных из репозиториев, дополнительная валидация входных данных, их преобразование и т.д.
 """
+from pydantic import BaseModel
 
-from app.repositories.users import UserRepo
+from app.repositories.users import UserRepo, UserResponseSchema
 from .user_get import UsersGetAll
 from .user_post import UserCreateData
 from passlib.context import CryptContext
-from ..token import Token
+from ..token import Token, TokenData
 from fastapi import HTTPException
 
 
@@ -37,9 +38,15 @@ class User:
                 id_user = new_user.id
                 tokens = Token.generate_tokens({"sub": login, "id": id_user})
                 result = await Token.save_token_for_user(tokens["refresh"], id_user)
-                return {
-                    "tokens": tokens,
-                }
+                if not result:
+                    return HTTPException(
+                        status_code=400,
+                        detail='Возникла ошибка при записи пользователя'
+                    )
+                return UserCreateWithTokens(
+                    user=new_user,
+                    tokens=tokens
+                )
             raise HTTPException(
                 status_code=409,
                 detail='Данный пользователь уже существует'
@@ -54,3 +61,7 @@ class User:
         current_token = await Token.find_token(token, info['id'])
         return current_token
 
+
+class UserCreateWithTokens(BaseModel):
+    user: UserResponseSchema
+    tokens: dict[str, TokenData]

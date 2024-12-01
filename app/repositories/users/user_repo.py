@@ -10,7 +10,7 @@ class UserRepo(BaseRepo):
     model = User
 
     @classmethod
-    async def insert_user(cls, **values):
+    async def insert_user(cls, **values) -> User | None:
         try:
             return await cls.add(**values)
         except IntegrityError as e:
