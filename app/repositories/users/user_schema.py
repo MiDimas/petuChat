@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from ..emails import EmailSchema
 
 
-class UserResponseSchema(BaseModel):
+class  UserResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     name: str = Field(..., description="Имя пользователя")

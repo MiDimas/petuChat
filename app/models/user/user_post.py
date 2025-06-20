@@ -30,3 +30,24 @@ class UserCreateData(BaseModel):
                              ' одну прописную буквы латинского алфавита, а так же одну цифру' +
                              ' и содержать не менее 8 символов')
         return values
+    
+class UserLoginData(BaseModel):
+    name: str = Field(min_length=3, max_length=30)
+    password: str = Field(min_length=3, max_length=256)
+    
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, values: str) -> str:
+        values = values.strip()
+        if not values:
+            raise ValueError("Логин не может быть пустым")
+        if len(values) < 3 or len(values) > 30:
+            raise ValueError("Логин не может содержать меньше 3 и больше 30 символов")
+        return values
+    
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, values: str) -> str:
+        if not values:
+            raise ValueError("Пароль не может быть пустым")
+        return values

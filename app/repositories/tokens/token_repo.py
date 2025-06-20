@@ -46,3 +46,18 @@ class TokenRepo(BaseRepo):
                 if pwd_context.verify(token, t.refresh_token):
                     return t
             return None
+    
+    @classmethod
+    async def delete_token_by_user_id(cls, token: str, user_id: int):
+        async with async_session_maker() as session:
+            pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
+
+            query = select(Token).where(Token.user_id == user_id)
+            result = await session.execute(query)
+            user_tokens = result.scalars().all()
+            for t in user_tokens:
+                if pwd_context.verify(token, t.refresh_token):
+                    await session.delete(t)
+                    await session.commit()
+                    return True
+            return False

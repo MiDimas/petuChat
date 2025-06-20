@@ -46,3 +46,7 @@ class Token:
     @classmethod
     async def find_token(cls, token: str, user_id: int):
         return await TokenRepo.find_token_obj(token, user_id)
+    
+    @classmethod
+    async def delete_token(cls, token: str, user_id: int):
+        return await TokenRepo.delete_token_by_user_id(token, user_id)
