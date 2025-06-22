@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from app.repositories.users import UserResponseSchema, UserFullResponseSchema
 from app.models.user import User, UsersGetAll, UserCreateData, UserLoginData
+from app.models.auth import Auth
 
 router = APIRouter(prefix='/users', tags=['Пользователи'])
 
@@ -81,8 +82,32 @@ async def find_refresh_token(token: str):
         raise HTTPException(status_code=400, detail=e.args)
 
 
-@router.get("/{id}", summary="Получение пользователя по id")
-async def get_user_by_id(user_id: int, full: int | None = 0) -> UserResponseSchema | UserFullResponseSchema:
+@router.post("/refresh", summary="Сгенерировать новый токен доступа")
+async def refresh_token(request: Request, response: Response, token: str|None = None):
+    try:
+        if not token:
+            token = request.cookies.get("refresh_token")
+        if not token:
+            raise HTTPException(status_code=401, detail='Вы не авторизованы')
+        user_with_tokens = await User.verify_and_update_refresh_token(token)
+        response.set_cookie(
+            key="refresh_token",
+            value=user_with_tokens.tokens["refresh"].token,
+            httponly=True,
+            # secure=True,  # Для HTTPS
+            samesite="lax",
+            max_age=30 * 24 * 60 * 60  # 30 дней в секундах
+        )
+        return user_with_tokens.user
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=e.args)
+
+
+@router.get("/{user_id}", summary="Получение пользователя по id")
+async def get_user_by_id(user_id: int, full: int | None = 0, user: dict = Depends(Auth.verify_access_token)) -> UserResponseSchema | UserFullResponseSchema:
+    print(user)
+    if not user['id']:
+        raise HTTPException(status_code=401, detail='Вы не авторизованы')
     if full:
         return await User.get_full_user_by_id(user_id)
     return await User.get_user_by_id(user_id)

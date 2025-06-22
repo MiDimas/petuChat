@@ -4,7 +4,7 @@ from app.database import async_session_maker
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.repositories import User
-from datetime import datetime
+from datetime import datetime, timezone
 from passlib.context import CryptContext
 
 
@@ -13,7 +13,7 @@ class TokenRepo(BaseRepo):
 
     @classmethod
     async def save_token_by_user_id(cls, user_id: int, token: str, expired: datetime,
-                                    issued: datetime = datetime.now(),
+                                    issued: datetime = datetime.now(timezone.utc),
                                     info: str | None = None, revoked: bool = False):
         async with async_session_maker() as session:
             query = select(User).where(User.id == user_id).options(selectinload(User.tokens))
@@ -46,6 +46,28 @@ class TokenRepo(BaseRepo):
                 if pwd_context.verify(token, t.refresh_token):
                     return t
             return None
+
+    @classmethod
+    async def find_and_update_token_obj(cls, token: str, new_token: str, 
+                                        expired: datetime, user_id: int, issued: datetime = datetime.now(timezone.utc),
+                                        revoked: bool = False):
+        async with async_session_maker() as session:
+            pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
+
+            query = select(Token).where(Token.user_id == user_id)
+            result = await session.execute(query)
+            user_tokens = result.scalars().all()
+            for t in user_tokens:
+                if pwd_context.verify(token, t.refresh_token):
+                    pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
+                    token_hash = pwd_context.hash(new_token)
+                    t.refresh_token = token_hash
+                    t.expires_at = expired.replace(tzinfo=None)
+                    t.issued_at = issued.replace(tzinfo=None)
+                    t.revoked = revoked
+                    await session.commit()
+                    return True
+            return False
     
     @classmethod
     async def delete_token_by_user_id(cls, token: str, user_id: int):

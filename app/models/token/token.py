@@ -39,6 +39,26 @@ class Token:
             issued=token.issued
         )
 
+
+    @classmethod
+    async def update_token_for_user(cls, token: str, user_id: int, name: str):
+        if not token:
+            raise ValueError('Токен не найден')
+        if not user_id:
+            raise ValueError('Пользователь не найден')
+
+        new_tokens = cls.generate_tokens({"sub": name, "id": user_id})
+        refresh = new_tokens['refresh']
+        res = await TokenRepo.find_and_update_token_obj(
+            token=token, 
+            new_token=refresh.token,
+            expired=refresh.expired, 
+            user_id=user_id
+        )
+        if not res:
+            raise ValueError('Токен не найден, авторизуйтесь заново')
+        return new_tokens
+    
     @classmethod
     def decode_refresh_token(cls, token: str):
         return jwt.decode(token, key=settings.SECRET_REFRESH_KEY, algorithms=['HS256'])

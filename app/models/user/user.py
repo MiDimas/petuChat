@@ -56,15 +56,31 @@ class User:
 
     @classmethod
     async def verify_user_refresh_token(cls, token: str):
-
         info = Token.decode_refresh_token(token)
         current_token = await Token.find_token(token, info['id'])
         return current_token
     
+    @classmethod
+    async def verify_and_update_refresh_token(cls, token: str):
+        info = Token.decode_refresh_token(token)
+        user = await UserRepo.find_one_or_none_by_id(info['id'])
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail='Пользователь не найден'
+            )
+        current_tokens = await Token.update_token_for_user(token, info['id'], user.name)
+        user.token = current_tokens['access'].token
+        user_with_tokens = UserCreateWithTokens(
+            user=user,
+            tokens=current_tokens
+        )
+        
+        return user_with_tokens
 
     @classmethod
     async def login_user(cls, params: UserLoginData):
-        user = await UserRepo.find_one_or_none_by_name(params.name)
+        user = await UserRepo.find_one_or_none_by_name(params.name.lower().strip())
         print(user)
         pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
         if not user:
